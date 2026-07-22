@@ -1,0 +1,24 @@
+{
+  "name": "@auth-starter/db",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "generate": "bunx drizzle-kit generate",
+    "migrate": "bunx drizzle-kit check && bunx drizzle-kit migrate",
+    "teardown:e2e": "bun run scripts/teardown-e2e.ts",
+    "make-admin": "bun run scripts/make-admin.ts"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "bun-types": "^1.3.14",
+    "drizzle-kit": "^0.31.10"
+  }
+}

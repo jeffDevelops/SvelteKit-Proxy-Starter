@@ -1,0 +1,52 @@
+{
+  "name": "auth-starter",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "packages/*/*"
+  ],
+  "scripts": {
+    "db:up": "docker compose --project-directory . -f docker/compose.dev.yml up -d --wait",
+    "db:down": "docker compose --project-directory . -f docker/compose.dev.yml down",
+    "db:nuke": "docker compose --project-directory . -f docker/compose.dev.yml down -v && docker compose --project-directory . -f docker/compose.dev.yml up -d --wait",
+    "dev": "bun run --filter \"*\" dev",
+    "start:dev": "bun run --filter \"*\" start:dev",
+    "build": "bun run --filter \"*\" build",
+    "typecheck": "bun run --filter \"*\" typecheck",
+    "lint": "oxlint .",
+    "format": "oxfmt . && prettier --write \"**/*.svelte\"",
+    "format:check": "oxfmt --check . && prettier --check \"**/*.svelte\"",
+    "changelog": "git cliff --output CHANGELOG.md",
+    "test:unit": "bun run --filter \"*\" test:unit",
+    "test:e2e": "bun run --filter \"*\" test:e2e",
+    "test": "bun run test:unit && bun run test:e2e",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
+    "@types/node": "^25.9.3",
+    "git-cliff": "^2.13.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "oxfmt": "^0.55.0",
+    "oxlint": "^1.70.0",
+    "prettier": "^3.9.1",
+    "prettier-plugin-svelte": "^4.1.1",
+    "turbo": "^2.9.18"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "oxlint",
+      "oxfmt --check"
+    ],
+    "*.svelte": [
+      "oxlint",
+      "prettier --check"
+    ],
+    "*.{css,json}": [
+      "oxfmt --check"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Bun / Node
+node_modules/
+.bun/
+
+# SvelteKit
+apps/web/.svelte-kit/
+apps/web/build/
+
+# Build outputs
+dist/
+*.js.map
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+
+# Claude Code local settings (session-specific permissions)
+.claude/settings.local.json
+
+# Dev/e2e email outboxes (DevEmailProvider)
+.email-outbox/
+.e2e-outbox/

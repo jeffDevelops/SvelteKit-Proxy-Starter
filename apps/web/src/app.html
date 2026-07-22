@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="text-scale" content="scale" />
+
+    <style>
+      html,
+      body {
+        background-color: #29292a;
+      }
+    </style>
+
+    <!-- Default to light; script below overrides to dark if needed. -->
+    <meta name="theme-color" content="#ecebf3" />
+
+    <script>
+      // Apply the stored theme before first paint to avoid a light-mode
+      // flash. Must stay in sync with THEME_STORAGE_KEY in
+      // src/lib/hooks/theme.svelte.ts.
+      ;(() => {
+        const stored = localStorage.getItem('theme-preference')
+        if (
+          stored === 'dark' ||
+          (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#29292a')
+        }
+      })()
+    </script>
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
+</html>

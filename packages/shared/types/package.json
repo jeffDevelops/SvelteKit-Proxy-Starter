@@ -1,0 +1,12 @@
+{
+  "name": "@auth-starter/types",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "dependencies": {
+    "@auth-starter/db": "0.0.1"
+  }
+}

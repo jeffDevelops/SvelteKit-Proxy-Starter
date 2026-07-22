@@ -1,0 +1,65 @@
+# Lint, format, unit, and e2e checks — the same gates CLAUDE.md requires
+# locally. The e2e job runs the real SvelteKit → Hono → Postgres path against
+# a service-container database; email goes through the file outbox (no
+# Mailgun credentials in CI, so real sends are impossible).
+name: CI
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: postgres://auth-starter:auth-starter@localhost:5432/auth-starter_ci
+      # apps/api validates these at startup; the API unit tests import that
+      # module too. CI-only values — nothing here is a real secret.
+      BETTER_AUTH_URL: http://localhost:4173
+      BETTER_AUTH_SECRET: ci-only-secret-never-used-outside-actions
+    services:
+      db:
+        image: postgres:17
+        env:
+          POSTGRES_USER: auth-starter
+          POSTGRES_PASSWORD: auth-starter
+          POSTGRES_DB: auth-starter_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U auth-starter -d auth-starter_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun lint
+
+      - run: bun run format:check
+
+      - name: Apply database migrations
+        run: bun run migrate
+        working-directory: packages/db
+
+      # The web unit suite runs its client project in real Chromium (Vitest
+      # browser mode), and the e2e suite drives it via Playwright. WebKit is
+      # needed by font-audit.e2e.ts (Safari-engine font rendering check).
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium webkit
+        working-directory: apps/web
+
+      - run: bun run test:unit
+
+      - run: bun run test:e2e
+        working-directory: apps/web
